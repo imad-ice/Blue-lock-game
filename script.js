@@ -9,7 +9,7 @@ let totalGames = 0;
 let gameStarted = false; 
 let gameOver = false; 
 
-const isagiDialogue = new Audio('im-a-striker.mp3'); 
+const isagiDialogue = new Audio('isagi.mp3'); 
 const nagiCatchSound = new Audio('nagi.mp3'); 
 const bachiraCatchSound = new Audio('bachira.mp3');
 const goalSound = new Audio('goal.mp3'); 
@@ -247,8 +247,9 @@ function moveIsagi(newPosition) {
         setTimeout(() => {
             showRestartPrompt('Game Over! Bachira caught you!');
             resetGame();
-        },5000); // Adjust delay as needed
-        return;
+            return;
+        },500); // Adjust delay as needed
+
     }
     if (positionIsagi === positionNagi) {
         playNagiCatchSound();
@@ -256,16 +257,15 @@ function moveIsagi(newPosition) {
         setTimeout(() => {
             showRestartPrompt('Game Over! Nagi caught you!');
             resetGame();
-        }, 2000); // Adjust delay as needed
-        return;
+            return;
+        }, 500); // Adjust delay as needed
+        
     }
     moveDefenders();
     moveGagamaru();
-    
-    setTimeout(() => {
+    if(!gameOver) {
         playIsagiDialogue();
-    }, 2000);
-
+    }
 }
 
 // Function to move defenders (Bachira and Nagi)
@@ -306,8 +306,9 @@ function moveDefenders() {
                 setTimeout(() => {
                     showRestartPrompt('Game Over! Bachira caught you!');
                     resetGame();
-                }, 5000); 
-                return;
+                    return;
+                }, 500); 
+
             }
         }
     }
@@ -336,8 +337,9 @@ function moveDefenders() {
                 setTimeout(() => {
                     showRestartPrompt('Game Over! Nagi caught you!');
                     resetGame();
-                }, 1000);
-                return;
+                    return;
+                }, 500);
+
             }
         }
     }
@@ -390,13 +392,13 @@ shootButton.onclick = function () {
         if (!isGoal) {
             showRestartPrompt('Game Over! You hit the goalkeeper!');
         } else {
-            playGoalSound(); // Play goal sound when goal is scored
+            playGoalSound();
             setTimeout(() => {
                 
                 showRestartPrompt('Goal Scored! You Win!');
                 incrementGamesWon();
                 resetGame(); 
-            }, 3000);
+            }, 500);
             
         }
     }
@@ -448,18 +450,18 @@ document.addEventListener('keydown', (event) => {
             }
             break;
         case ' ': // Spacebar for shoot
-            shootButton.onclick(); // Programmatically trigger the shoot button's click event
+            shootButton.onclick();
             break;
     }
 });
 
-// Function to show restart prompt with a message
+
 function showRestartPrompt(message) {
     const restartMessage = document.getElementById('restart-message');
     restartMessage.textContent = message;
     restartPrompt.style.display = "block";
 }
 
-// Initialize Game State on Load
-loadStats(); // Load stats from local storage
-resetGame();  // Initialize game state, including positions and timer
+
+loadStats(); 
+resetGame();  
