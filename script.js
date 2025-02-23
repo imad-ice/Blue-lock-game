@@ -292,11 +292,14 @@ function moveDefenders() {
         }
         let newBachiraPos = newBachiraRow * gridCols + newBachiraCol;
 
-       
+        if (newBachiraPos === positionNagi) {
+            newNagiPos = (newBachiraPos > 0) ? newBachiraPos - 1 : newBachiraPos + 1;
+        }
         if (newBachiraPos >= 0 && newBachiraPos < totalTiles) {
             tiles[positionBachira].innerHTML = ""; 
             tiles[newBachiraPos].appendChild(bachira);
             positionBachira = newBachiraPos;
+
             if (positionBachira === positionIsagi) {
                 playBachiraCatchSound();
                 gameOver = true;
