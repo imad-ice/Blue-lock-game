@@ -195,23 +195,23 @@ img{
 
 @media screen and (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 2px;
     }
     .container {
         padding: 10px;
         border-radius: 10px;
-        width: 95%;
+        width: 320px;
         max-width: none;
     }
     .header h2 {
-        font-size: 1em;
+        font-size: .5em;
     }
     .stats, .prompt, .timer {
-        font-size: 0.8em;
+        font-size: 0.4em;
     }
     .timer {
-        padding: 8px 15px;
-        margin-bottom: 15px;
+        padding: 4px 8px;
+        margin-bottom: 8px;
     }
     .goalpost {
         max-width: 180px;
@@ -220,7 +220,10 @@ img{
         margin-bottom: 15px;
     }
     .board {
-        max-width: 95%;
+        min-height: 250px;
+        max-width: 300px;
+
+
         width: auto;
         margin-bottom: 15px;
         gap: 3px;
@@ -293,5 +296,4 @@ img{
 .restart-buttons button:hover {
     background-color: #64b5f6;
 }
-
 
