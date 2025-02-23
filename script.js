@@ -80,8 +80,6 @@ function resetGame() {
     clearInterval(timerInterval); // Clear the old timer
     timeLeft = 30;
     timeDisplay.textContent = `${timeLeft} sec`;
-    metavCount = 0;
-    isDisabled = false;
     gameOver = false; // Reset gameOver flag
 
     // Clear board tiles
@@ -120,9 +118,7 @@ function resetGame() {
     }
 
     promptText.style.display = "block"; // Show the prompt text again
-
-    // Restart timer
-    startTimer();
+    gameStarted = false; 
 }
 
 function startGame() {
@@ -186,6 +182,7 @@ selectableTiles.forEach(tileNum => {
                 }
                 promptText.style.display = "none"; // Hide the prompt after selection
                 incrementTotalGames(); 
+                startGame();
             }
         });
     }
@@ -270,7 +267,7 @@ function moveIsagi(newPosition) {
 
 // Function to move defenders (Bachira and Nagi)
 function moveDefenders() {
-    // Calculate row and column for each character
+    // Calculate rows and columns for current positions.
     let isagiRow = Math.floor(positionIsagi / gridCols);
     let isagiCol = positionIsagi % gridCols;
     let bachiraRow = Math.floor(positionBachira / gridCols);
@@ -278,11 +275,11 @@ function moveDefenders() {
     let nagiRow = Math.floor(positionNagi / gridCols);
     let nagiCol = positionNagi % gridCols;
 
-    let moveBachira = Math.random() < 0.5;
-    let moveNagi = Math.random() < 0.5;
+    // Determine potential new positions.
+    let potentialBachiraPos = positionBachira;
+    let potentialNagiPos = positionNagi;
 
-    if (moveBachira) {
-       
+    if (Math.random() < 0.5) {
         let newBachiraRow = bachiraRow;
         let newBachiraCol = bachiraCol;
         if (Math.abs(isagiRow - bachiraRow) > Math.abs(isagiCol - bachiraCol)) {
@@ -290,31 +287,10 @@ function moveDefenders() {
         } else {
             newBachiraCol += isagiCol > bachiraCol ? 1 : -1;
         }
-        let newBachiraPos = newBachiraRow * gridCols + newBachiraCol;
-
-        if (newBachiraPos === positionNagi) {
-            newNagiPos = (newBachiraPos > 0) ? newBachiraPos - 1 : newBachiraPos + 1;
-        }
-        if (newBachiraPos >= 0 && newBachiraPos < totalTiles) {
-            tiles[positionBachira].innerHTML = ""; 
-            tiles[newBachiraPos].appendChild(bachira);
-            positionBachira = newBachiraPos;
-
-            if (positionBachira === positionIsagi) {
-                playBachiraCatchSound();
-                gameOver = true;
-                setTimeout(() => {
-                    showRestartPrompt('Game Over! Bachira caught you!');
-                    resetGame();
-                    return;
-                }, 500); 
-
-            }
-        }
+        potentialBachiraPos = newBachiraRow * gridCols + newBachiraCol;
     }
 
-    if (moveNagi) {
-        // Determine new position for Nagi
+    if (Math.random() < 0.5) {
         let newNagiRow = nagiRow;
         let newNagiCol = nagiCol;
         if (Math.abs(isagiRow - nagiRow) > Math.abs(isagiCol - nagiCol)) {
@@ -322,29 +298,48 @@ function moveDefenders() {
         } else {
             newNagiCol += isagiCol > nagiCol ? 1 : -1;
         }
-        let newNagiPos = newNagiRow * gridCols + newNagiCol;
-        if (newNagiPos === positionBachira) {
-            newNagiPos = (newNagiPos > 0) ? newNagiPos - 1 : newNagiPos + 1;
+        potentialNagiPos = newNagiRow * gridCols + newNagiCol;
+    }
+
+   
+    if (potentialBachiraPos === potentialNagiPos) {
+       
+        potentialNagiPos = (potentialNagiPos > 0) ? potentialNagiPos - 1 : potentialNagiPos + 1;
+        
+    }
+
+    
+    if (potentialBachiraPos >= 0 && potentialBachiraPos < totalTiles) {
+        tiles[positionBachira].innerHTML = ""; 
+        tiles[potentialBachiraPos].appendChild(bachira);
+        positionBachira = potentialBachiraPos;
+        if (positionBachira === positionIsagi) {
+            playBachiraCatchSound();
+            gameOver = true;
+            setTimeout(() => {
+                showRestartPrompt('Game Over! Bachira caught you!');
+                resetGame();
+            }, 500);
+            return;
         }
+    }
 
-        if (newNagiPos >= 0 && newNagiPos < totalTiles) {
-            tiles[positionNagi].innerHTML = ""; 
-            tiles[newNagiPos].appendChild(nagi);
-            positionNagi = newNagiPos;
-            if (positionNagi === positionIsagi) {
-                playNagiCatchSound();
-                gameOver = true; 
-                setTimeout(() => {
-                    showRestartPrompt('Game Over! Nagi caught you!');
-                    resetGame();
-                    return;
-                }, 500);
-
-            }
+    
+    if (potentialNagiPos >= 0 && potentialNagiPos < totalTiles) {
+        tiles[positionNagi].innerHTML = ""; 
+        tiles[potentialNagiPos].appendChild(nagi);
+        positionNagi = potentialNagiPos;
+        if (positionNagi === positionIsagi) {
+            playNagiCatchSound();
+            gameOver = true;
+            setTimeout(() => {
+                showRestartPrompt('Game Over! Nagi caught you!');
+                resetGame();
+            }, 500);
+            return;
         }
     }
 }
-
 
 function moveGagamaru() {
     let newPosition = Math.floor(Math.random() * 3);
